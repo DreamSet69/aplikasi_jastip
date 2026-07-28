@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Pesanan - Jastip Jepang{% endblock %}
+
+{% block content %}
+<div class="header-action">
+    <h2><i class="fa-solid fa-clipboard-list text-accent"></i> Daftar Pesanan Jastip</h2>
+    <a href="{{ url_for('jastip.tambah') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Pesanan Baru</a>
+</div>
+
+{% if pesanan %}
+<div class="grid-cards">
+    {% for item in pesanan %}
+    <div class="card glass">
+        <div class="card-header">
+            <h3>{{ item.produk }}</h3>
+            <span class="badge status-{{ item.status|lower }}">{{ item.status }}</span>
+        </div>
+        <div class="card-body">
+            <p><i class="fa-solid fa-user"></i> <strong>Pemesan:</strong> {{ item.nama_pemesan }}</p>
+            <p><i class="fa-solid fa-box"></i> <strong>Jumlah:</strong> {{ item.jumlah }}</p>
+            <p><i class="fa-solid fa-tag"></i> <strong>Harga Satuan:</strong> ¥{{ item.harga_satuan }} <span class="idr-price text-accent" style="font-size: 0.85em; margin-left: 5px;" data-jpy="{{ item.harga_satuan }}"></span></p>
+            <p><i class="fa-solid fa-calculator"></i> <strong>Total:</strong> ¥{{ item.jumlah * item.harga_satuan }} <span class="idr-price text-accent" style="font-size: 0.85em; margin-left: 5px;" data-jpy="{{ item.jumlah * item.harga_satuan }}"></span></p>
+            {% if item.catatan %}
+            <div class="note">
+                <strong>Catatan:</strong> {{ item.catatan }}
+            </div>
+            {% endif %}
+            <p class="date-text"><i class="fa-regular fa-clock"></i> {{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else '' }}</p>
+        </div>
+        <div class="card-footer">
+            {% if item.status != 'selesai' %}
+            <form action="{{ url_for('jastip.selesai', id=item.id) }}" method="POST" class="inline-form">
+                <button type="submit" class="btn btn-sm btn-primary" style="margin-right: 5px;"><i class="fa-solid fa-check"></i> Selesai</button>
+            </form>
+            {% endif %}
+            <a href="{{ url_for('jastip.edit', id=item.id) }}" class="btn btn-sm btn-outline"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+            <form action="{{ url_for('jastip.hapus', id=item.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesanan ini?');" style="margin-left: 5px;">
+                <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Hapus</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state glass">
+    <div class="empty-icon">
+        <i class="fa-brands fa-pagelines text-accent"></i>
+    </div>
+    <h3>Belum ada pesanan</h3>
+    <p>Mulai catat pesanan Jastip pertamamu!</p>
+    <a href="{{ url_for('jastip.tambah') }}" class="btn btn-primary mt-3">Tambah Pesanan</a>
+</div>
+{% endif %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('https://api.exchangerate-api.com/v4/latest/JPY')
+            .then(response => response.json())
+            .then(data => {
+                const rate = data.rates.IDR;
+                document.querySelectorAll('.idr-price').forEach(el => {
+                    const jpy = parseFloat(el.getAttribute('data-jpy'));
+                    if (!isNaN(jpy)) {
+                        const idr = jpy * rate;
+                        el.innerHTML = `(≈ Rp ${idr.toLocaleString('id-ID', {maximumFractionDigits:0})})`;
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching exchange rate:', error));
+    });
+</script>
+{% endblock %}

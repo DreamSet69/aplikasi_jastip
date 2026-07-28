@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jastip Jepang{% endblock %}</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Background Elements -->
+    <div class="bg-shape circle-1"></div>
+    <div class="bg-shape circle-2"></div>
+
+    <nav class="navbar glass">
+        <div class="nav-container">
+            <a href="{{ url_for('jastip.index') }}" class="nav-brand">
+                <i class="fa-solid fa-fan brand-icon spin-slow"></i>
+                <span>Fajar<span class="text-accent">Jastip</span></span>
+                <span class="badge" style="background: var(--accent-red); color: white; margin-left: 8px;">JOSJIZ</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('jastip.index') }}"><i class="fa-solid fa-table-list"></i> Pesanan</a></li>
+                <li><a href="{{ url_for('jastip.tambah') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i>
+                        Tambah Pesanan</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FajarJastip - From Kimpetz To Everyone.</p>
+    </footer>
+</body>
+
+</html>

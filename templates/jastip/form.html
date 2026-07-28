@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Edit' if pesanan else 'Tambah' }} Pesanan - Jastip Jepang{% endblock %}
+
+{% block content %}
+<div class="form-container glass">
+    <div class="form-header">
+        <h2>{{ 'Edit Pesanan' if pesanan else 'Tambah Pesanan Baru' }}</h2>
+        <a href="{{ url_for('jastip.index') }}" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+
+    <form method="POST" class="custom-form">
+        <div class="form-group">
+            <label for="nama_pemesan">Nama Pemesan</label>
+            <input type="text" id="nama_pemesan" name="nama_pemesan" required value="{{ pesanan.nama_pemesan if pesanan else '' }}" placeholder="Contoh: Budi Santoso">
+        </div>
+
+        <div class="form-group">
+            <label for="produk">Nama Produk (Jepang)</label>
+            <input type="text" id="produk" name="produk" required value="{{ pesanan.produk if pesanan else '' }}" placeholder="Contoh: KitKat Matcha, Sepatu Onitsuka">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="jumlah">Jumlah</label>
+                <input type="number" id="jumlah" name="jumlah" min="1" required value="{{ pesanan.jumlah if pesanan else '1' }}">
+            </div>
+            <div class="form-group half">
+                <label for="harga_satuan">Harga Satuan (¥)</label>
+                <input type="number" id="harga_satuan" name="harga_satuan" step="0.01" required value="{{ pesanan.harga_satuan if pesanan else '' }}" placeholder="Harga dalam Yen">
+                <div id="idr-preview" style="font-size: 0.85em; margin-top: 5px; font-weight: 500;" class="text-accent"></div>
+            </div>
+        </div>
+
+        {% if pesanan %}
+        <div class="form-group">
+            <label for="status">Status Pesanan</label>
+            <select id="status" name="status">
+                <option value="diproses" {% if pesanan.status == 'diproses' %}selected{% endif %}>Sedang Diproses (Belum dibeli)</option>
+                <option value="dibeli" {% if pesanan.status == 'dibeli' %}selected{% endif %}>Sudah Dibeli</option>
+                <option value="dikirim" {% if pesanan.status == 'dikirim' %}selected{% endif %}>Dikirim ke Indonesia</option>
+                <option value="selesai" {% if pesanan.status == 'selesai' %}selected{% endif %}>Selesai (Diterima)</option>
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="catatan">Catatan Khusus</label>
+            <textarea id="catatan" name="catatan" rows="4" placeholder="Warna, ukuran, atau instruksi khusus...">{{ pesanan.catatan if pesanan else '' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fa-solid {{ 'fa-floppy-disk' if pesanan else 'fa-plus' }}"></i> 
+                {{ 'Simpan Perubahan' if pesanan else 'Tambah Pesanan' }}
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const jumlahInput = document.getElementById('jumlah');
+        const hargaInput = document.getElementById('harga_satuan');
+        const previewDiv = document.getElementById('idr-preview');
+        let currentRate = 110; // Fallback rate
+
+        // Fetch live exchange rate
+        fetch('https://api.exchangerate-api.com/v4/latest/JPY')
+            .then(res => res.json())
+            .then(data => {
+                currentRate = data.rates.IDR;
+                updatePreview();
+            })
+            .catch(err => console.error('Error fetching exchange rate:', err));
+
+        function updatePreview() {
+            const jumlah = parseFloat(jumlahInput.value) || 0;
+            const harga = parseFloat(hargaInput.value) || 0;
+            if (harga > 0) {
+                const totalYen = jumlah * harga;
+                const totalIdr = totalYen * currentRate;
+                previewDiv.innerHTML = `Total: ¥${totalYen} &approx; Rp ${totalIdr.toLocaleString('id-ID', {maximumFractionDigits:0})}`;
+            } else {
+                previewDiv.innerHTML = '';
+            }
+        }
+
+        jumlahInput.addEventListener('input', updatePreview);
+        hargaInput.addEventListener('input', updatePreview);
+        
+        // Initial call if there are existing values (Edit mode)
+        updatePreview();
+    });
+</script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database import get_connection
+import pymysql
 
 jastip_bp = Blueprint('jastip', __name__, url_prefix='/jastip')
 
@@ -9,7 +10,7 @@ def index():
     if conn is None:
         return "Database connection error", 500
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM pesanan_jastip ORDER BY created_at DESC")
     pesanan = cursor.fetchall()
     cursor.close()
@@ -44,7 +45,7 @@ def tambah():
 @jastip_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     if request.method == 'POST':
         nama_pemesan = request.form.get('nama_pemesan')

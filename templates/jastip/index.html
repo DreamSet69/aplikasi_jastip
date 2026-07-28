@@ -12,6 +12,11 @@
 <div class="grid-cards">
     {% for item in pesanan %}
     <div class="card glass">
+        {% if item.gambar_url %}
+        <div class="card-img">
+            <img src="{{ item.gambar_url }}" alt="{{ item.produk }}">
+        </div>
+        {% endif %}
         <div class="card-header">
             <h3>{{ item.produk }}</h3>
             <span class="badge status-{{ item.status|lower }}">{{ item.status }}</span>

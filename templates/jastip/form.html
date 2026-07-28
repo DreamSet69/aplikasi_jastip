@@ -20,6 +20,11 @@
             <input type="text" id="produk" name="produk" required value="{{ pesanan.produk if pesanan else '' }}" placeholder="Contoh: KitKat Matcha, Sepatu Onitsuka">
         </div>
 
+        <div class="form-group">
+            <label for="gambar_url">URL Gambar Produk (Opsional)</label>
+            <input type="url" id="gambar_url" name="gambar_url" value="{{ pesanan.gambar_url if pesanan else '' }}" placeholder="Contoh: https://example.com/image.jpg">
+        </div>
+
         <div class="form-row">
             <div class="form-group half">
                 <label for="jumlah">Jumlah</label>

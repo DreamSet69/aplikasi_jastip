@@ -25,15 +25,16 @@ def tambah():
         produk = request.form.get('produk')
         jumlah = request.form.get('jumlah')
         harga_satuan = request.form.get('harga_satuan')
+        gambar_url = request.form.get('gambar_url')
         catatan = request.form.get('catatan')
         
         conn = get_connection()
         cursor = conn.cursor()
         query = """
-            INSERT INTO pesanan_jastip (nama_pemesan, produk, jumlah, harga_satuan, catatan)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO pesanan_jastip (nama_pemesan, produk, gambar_url, jumlah, harga_satuan, catatan)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (nama_pemesan, produk, jumlah, harga_satuan, catatan))
+        cursor.execute(query, (nama_pemesan, produk, gambar_url, jumlah, harga_satuan, catatan))
         conn.commit()
         cursor.close()
         conn.close()
@@ -52,15 +53,16 @@ def edit(id):
         produk = request.form.get('produk')
         jumlah = request.form.get('jumlah')
         harga_satuan = request.form.get('harga_satuan')
+        gambar_url = request.form.get('gambar_url')
         catatan = request.form.get('catatan')
         status = request.form.get('status')
         
         query = """
             UPDATE pesanan_jastip 
-            SET nama_pemesan=%s, produk=%s, jumlah=%s, harga_satuan=%s, catatan=%s, status=%s
+            SET nama_pemesan=%s, produk=%s, gambar_url=%s, jumlah=%s, harga_satuan=%s, catatan=%s, status=%s
             WHERE id=%s
         """
-        cursor.execute(query, (nama_pemesan, produk, jumlah, harga_satuan, catatan, status, id))
+        cursor.execute(query, (nama_pemesan, produk, gambar_url, jumlah, harga_satuan, catatan, status, id))
         conn.commit()
         cursor.close()
         conn.close()

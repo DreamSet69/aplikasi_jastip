@@ -1,4 +1,3 @@
--- Jalankan query ini di database MySQL Filess.io Anda sebelum menjalankan server
 
 CREATE TABLE IF NOT EXISTS pesanan_jastip (
   id INT AUTO_INCREMENT PRIMARY KEY,
